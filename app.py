@@ -52,7 +52,7 @@ elif st.session_state.step == "Profile":
 
 # STEP 4: DASHBOARD (ONLY AFTER ALL STEPS)
 elif st.session_state.step == "Dashboard":
-    st.title("📊 Dashboard")
+    st.title("📊 Welcome the stock market world")
 
     st.success("Welcome to Main Dashboard!")
 
