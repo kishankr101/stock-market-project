@@ -2,14 +2,35 @@ import streamlit as st
 
 st.set_page_config(page_title="Stock Predictor", layout="wide")
 
-# Session State
+# ---------- CUSTOM UI (BLUE/GREEN THEME) ----------
+st.markdown("""
+<style>
+body {
+    background-color: #0f172a;
+}
+.stApp {
+    background: linear-gradient(135deg, #0f172a, #022c22);
+    color: white;
+}
+h1, h2, h3 {
+    color: #22c55e;
+}
+.stButton>button {
+    background-color: #22c55e;
+    color: white;
+    border-radius: 8px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------- SESSION ----------
 if "step" not in st.session_state:
     st.session_state.step = "Signup"
 
-# Sidebar
+# ---------- SIDEBAR ----------
 st.sidebar.title("📊 Navigation")
 
-# AFTER DASHBOARD → SHOW FULL MENU
+# ---------- DASHBOARD ----------
 if st.session_state.step == "Dashboard":
 
     menu = st.sidebar.radio("Go to", ["Home", "Profile", "Logout"])
@@ -33,42 +54,54 @@ if st.session_state.step == "Dashboard":
         if st.button("Update Profile"):
             st.success("Profile Updated!")
 
-    # HOME / DASHBOARD
+    # HOME
     elif menu == "Home":
         st.title("📊 Main Dashboard")
 
-        # SEARCH BOX
+        # SEARCH
         search = st.text_input("🔍 Search Stocks")
 
         if search:
             st.write(f"Showing results for: {search}")
 
-        # INDIAN INDICES
-        st.subheader("🇮🇳 Indian Indices")
+        # ---------- TOP 10 PERFORMING STOCKS ----------
+        st.subheader("🚀 Top 10 Performing Stocks")
 
-        col1, col2, col3, col4, col5 = st.columns(5)
-
-        col1.metric("NIFTY 50", "22,000", "+1.2%")
-        col2.metric("SENSEX", "73,000", "+0.9%")
-        col3.metric("BANK NIFTY", "48,000", "+1.5%")
-        col4.metric("NIFTY IT", "35,000", "-0.5%")
-        col5.metric("MIDCAP", "12,000", "+0.7%")
-
-        # 20 STOCKS LIST
-        st.subheader("🏢 Top Indian Companies")
-
-        companies = [
+        top_stocks = [
             "Reliance", "TCS", "Infosys", "HDFC Bank", "ICICI Bank",
-            "SBI", "Wipro", "HCL Tech", "LT", "ITC",
-            "Bharti Airtel", "Asian Paints", "Maruti Suzuki", "Titan",
-            "Sun Pharma", "Power Grid", "NTPC", "ONGC", "Adani Ports", "Coal India"
+            "SBI", "Wipro", "HCL Tech", "LT", "ITC"
         ]
 
-        cols = st.columns(4)
-        for i, company in enumerate(companies):
-            cols[i % 4].write(f"• {company}")
+        cols = st.columns(5)
+        for i, stock in enumerate(top_stocks):
+            cols[i % 5].success(stock)
 
-# BEFORE DASHBOARD FLOW (NO CHANGE LOGIC)
+        # ---------- INDICES SELECTION ----------
+        st.subheader("📊 Select Indices")
+
+        index_option = st.selectbox(
+            "Choose Index",
+            ["NIFTY 50", "SENSEX", "BANK NIFTY", "NIFTY IT", "MIDCAP"]
+        )
+
+        # ---------- INDEX BASED COMPANIES ----------
+        st.subheader(f"🏢 Companies in {index_option}")
+
+        index_data = {
+            "NIFTY 50": ["Reliance", "TCS", "Infosys", "HDFC Bank"],
+            "SENSEX": ["HDFC Bank", "ICICI Bank", "ITC", "LT"],
+            "BANK NIFTY": ["SBI", "HDFC Bank", "ICICI Bank", "Axis Bank"],
+            "NIFTY IT": ["TCS", "Infosys", "Wipro", "HCL Tech"],
+            "MIDCAP": ["Adani Power", "Jindal Steel", "Voltas", "Page Industries"]
+        }
+
+        companies = index_data.get(index_option, [])
+
+        cols = st.columns(2)
+        for i, company in enumerate(companies):
+            cols[i % 2].write(f"• {company}")
+
+# ---------- SIGNUP ----------
 elif st.session_state.step == "Signup":
     st.title("📝 Signup")
 
@@ -80,6 +113,7 @@ elif st.session_state.step == "Signup":
         st.success("Signup Successful!")
         st.session_state.step = "Login"
 
+# ---------- LOGIN ----------
 elif st.session_state.step == "Login":
     st.title("🔐 Login")
 
@@ -90,6 +124,7 @@ elif st.session_state.step == "Login":
         st.success("Login Successful!")
         st.session_state.step = "Profile"
 
+# ---------- PROFILE ----------
 elif st.session_state.step == "Profile":
     st.title("👤 Complete Your Profile")
 
